@@ -1,3 +1,5 @@
+
+
 function myFunction() {
     document.getElementById("demo").innerHTML = decompress(compress("xyz"));
 }
@@ -88,7 +90,7 @@ function loadFile(evt) {
     var f = evt.target.files[0]; 
 
     if (f) {
-      var reader = new FileReader();
+      /*var reader = new FileReader();
       reader.onload = function(e) {
 			var header = e.target.result;
 			document.getElementById('demo').innerHTML = header + '<br>';
@@ -96,7 +98,20 @@ function loadFile(evt) {
 		};
 	  
 		var blob = f.slice(0, 6);
-		reader.readAsBinaryString(blob);
+		reader.readAsBinaryString(blob);*/
+		
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var buffer = e.target.result;
+			var dv = new Int32Array(buffer);
+			var p = 0;
+			document.getElementById('demo').innerHTML = dv[p++].toString(32) + dv[p++].toString(32) + '<br>';
+			var gr = new GifReader(buffer);
+			
+			alert(gr.frameInfo(0));
+		};
+		reader.readAsArrayBuffer(f);
+			
     } else { 
       alert("Failed to load file");
     }
@@ -113,13 +128,11 @@ function readFile() {
 	var reader = new FileReader();
 	reader.onload = function(e) {
 		var buffer = e.target.result;
-		var dataView = new DataView(buffer);
-		var colors = "";
-		for (var i = 0; i < buffer.byteLength; i++) {
-			colors += dataView.getInt8(i).toString(16);
-		}
+		var p = 0;
+		document.getElementById('demo').innerHTML = buffer[p++].toString(32) + buffer[p++].toString(32) + '<br>';
+		var gr = new GifReader(buffer);
 		
-		document.getElementById('demo').innerHTML = colors + '<br>';
+		alert(gr.frameInfo(0));
 	};
 	reader.readAsArrayBuffer(file);
 }
